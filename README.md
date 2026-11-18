@@ -40,3 +40,19 @@ Ein GitHub-Actions-Workflow baut auf jedem Push zu `main` ausschließlich die De
 ## Lizenz
 
 Für diese Demo wurde **noch keine Open-Source-Lizenz** festgelegt. Bis eine Lizenz ausdrücklich ausgewählt wird, wird keine Nutzungserlaubnis über die gesetzlichen Rechte hinaus eingeräumt.
+
+## Architektur und mobile Nutzung
+
+Die Demo trennt das fachliche Beispielmodell (`src/model/`) von Positionen und
+Canvas-Darstellung (`src/ui/`) sowie vom Browser-Speicheradapter (`src/storage/`).
+Ein Austausch von UI-Bibliothek oder Theme soll deshalb keine fachlichen Daten ändern.
+Der Browser-Speicher kann frühere Versionen der Demo übernehmen.
+
+Auf Smartphones stehen **Module**, **Karte** und **Details** als separate,
+touchfreundliche Bereiche zur Verfügung. Ein Modul in der Liste öffnet seine Details;
+die Karte lässt sich horizontal/vertikal verschieben und zoomt unabhängig davon.
+Auf Tablets werden Karte und Inspektor untereinander angeordnet; am Desktop
+erscheinen sie nebeneinander. Alle Symbole sind einheitliche SVG-Icons, keine Emojis.
+
+Automatisierte Builds prüfen TypeScript und das statische Bundle. Die tatsächliche
+Touch-Bedienung sollte zusätzlich auf echten iOS-/Android-Geräten erprobt werden.
