@@ -56,3 +56,39 @@ erscheinen sie nebeneinander. Alle Symbole sind einheitliche SVG-Icons, keine Em
 
 Automatisierte Builds prüfen TypeScript und das statische Bundle. Die tatsächliche
 Touch-Bedienung sollte zusätzlich auf echten iOS-/Android-Geräten erprobt werden.
+
+## Überarbeiteter Workspace-Einstieg
+
+Beim Öffnen erscheint nun **die Projektübersicht**, nicht direkt ein
+fest verdrahtetes Projekt. Das mitgelieferte Beispielspiel ist ein Projekt
+unter mehreren; weitere lokale Testprojekte können im Browser angelegt
+werden. Jedes Projekt hat einen getrennten Graphen und eigene
+Projekteinstellungen. Es werden **keine** Git-Repositories oder Konten erstellt.
+
+Im Projekt sind die Module nach `contains`-Beziehungen einklappbar.
+Eine Modulwahl öffnet zunächst eine **Kurzinfo**, nicht die vollständige
+Detailansicht. Erst `Details öffnen` zeigt Aufgaben, Beziehungen und
+Quelldateien ausführlich.
+
+Die Karte unterstützt `Einpassen`, Zoom von **20 % bis 200 %**,
+Plus/Minus und Touch-Gesten für Verschieben/Pinch-Zoom. Auf dem Smartphone
+kann zwischen Modulliste und Canvas gewechselt werden; die Info-Karte
+überdeckt nicht dauerhaft die Projektkarte.
+
+Die Demo-Einstellungen unterscheiden bisher browserweite
+Darstellungsoptionen (Hell/Dunkel, Dichte) von
+projektbezogenen Voreinstellungen (Standardansicht, Aufgabenkennzahlen).
+Alle Einstellungen bleiben lokal im Browser. Rollen, Serverrichtlinien,
+Integrations-Credentials und synchronisierte Einstellungen sind
+**noch nicht implementiert**.
+
+Das Design verwendet neutrale Tokens und zentral verwaltete SVG-Symbole.
+Ein späteres Theme oder ein anderer Canvas-Renderer soll den
+fachlichen Projektgraphen unverändert lassen.
+
+## Überprüfung
+
+`npm run test:architecture` prüft die Trennung von fachlichen
+Projektdaten, Hierarchie und Darstellung sowie Settings-Scopes.
+`npm run build` prüft TypeScript und erzeugt das statische Bundle.
+Die Gesten sollten zusätzlich auf echten Handys und Tablets getestet werden.
