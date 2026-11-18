@@ -218,3 +218,31 @@ button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-v
   .atlas-statusbar{padding:10px 14px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important}}
+
+/* Distinct named canvas layouts; these controls never alter domain graph data. */
+.atlas-layout-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 20px;
+  background:var(--atlas-surface);border-bottom:1px solid var(--atlas-border)}
+.atlas-layout-toolbar label{display:flex;align-items:center;gap:8px;color:var(--atlas-muted);font-size:12px}
+.atlas-layout-toolbar select,.atlas-layout-toolbar input{border:1px solid var(--atlas-border);border-radius:5px;
+  background:var(--atlas-control);color:var(--atlas-text);height:37px;padding:7px 10px;font-size:13px;min-width:0}
+.atlas-layout-toolbar select{min-width:135px}
+.atlas-layout-toolbar input{flex:1 1 170px;max-width:270px}
+.atlas-layout-toolbar button{border:1px solid var(--atlas-border);background:var(--atlas-control);border-radius:5px;
+  padding:7px 10px;min-height:37px;font-size:12px}
+.atlas-layout-toolbar button:hover:not(:disabled){background:var(--atlas-hover)}
+.atlas-layout-toolbar small{color:var(--atlas-muted);font-size:11px;width:100%}
+.atlas-layout-error{color:#dba9a3;font-size:12px;width:100%}
+.atlas-layout-nudge{display:flex;align-items:center;gap:9px;flex-wrap:wrap;border-top:1px solid var(--atlas-border);
+  margin-top:13px;padding-top:12px}
+.atlas-layout-nudge span{font-size:11px;color:var(--atlas-muted);flex:1 1 auto}
+.atlas-layout-nudge>div{display:flex;gap:4px}
+.atlas-layout-nudge button{width:37px;height:37px;border:1px solid var(--atlas-border);
+  background:var(--atlas-control);border-radius:5px;font-size:17px}
+@media(max-width:700px){
+  .atlas-layout-toolbar{padding:10px 12px;gap:7px}
+  .atlas-layout-toolbar label{width:100%;justify-content:space-between}
+  .atlas-layout-toolbar select{min-width:0;flex:1;height:44px;font-size:16px}
+  .atlas-layout-toolbar input{width:100%;max-width:none;height:44px;font-size:16px}
+  .atlas-layout-toolbar button{min-height:44px}
+  .atlas-layout-nudge button{min-width:44px;min-height:44px}
+}
