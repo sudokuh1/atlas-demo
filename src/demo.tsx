@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { appendIdea, changeTaskStatus, connectedRelations, openTaskCount } from "./model/demo-model";
 import type { DemoState, Status, View, DemoNode } from "./model/demo-model";
 import { moduleTree } from "./model/module-tree";
-import { EXAMPLE_PROJECT, defaultProjectState, newProjectEntry, projectSettings, updateProjectSettings } from "./model/workspace";
+import { defaultProjectState, newProjectEntry, projectSettings, updateProjectSettings } from "./model/workspace";
 import type { ProjectEntry, SettingsState, WorkspaceCatalog } from "./model/workspace";
 import { loadCatalog, loadProjectState, loadSettings, saveCatalog, saveProjectState, saveSettings } from "./storage/demo-storage";
 import { DemoCanvas } from "./ui/DemoCanvas";
