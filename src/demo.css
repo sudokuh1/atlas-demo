@@ -67,3 +67,66 @@ h1{font-size:23px;margin:5px 0 0}
 .demo-footer{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:12px 16px;border-radius:0 0 14px 14px;border:1px solid #34465c;border-top:0;font-size:11px;color:#9eb6d1;background:#132238}
 .demo-footer button{background:#283f5b;border:1px solid #5a789c;color:#dceafe;border-radius:7px;padding:7px 9px}
 @media(max-width:760px){.demo-layout{grid-template-columns:1fr}.demo-map-scroller{min-height:420px;max-height:450px}.demo-inspector{border-left:0;border-top:1px solid #34465c;max-height:none}.demo-shell{padding:6px}.demo-header{border-radius:10px 10px 0 0}.demo-intro{font-size:11px}.demo-summary{gap:4px}}
+
+/* Input-independent panels; the narrow layout prioritizes selection and inspection. */
+.demo-mobile-tabs,.demo-module-browser{display:none}
+.demo-emblem svg,.demo-node-icon svg,.demo-selected-icon svg{color:#c2d7f2}
+.demo-file{display:flex;align-items:center;gap:8px}
+.demo-file svg{flex:0 0 auto}
+.demo-node:focus-visible,.demo-relation:focus-visible,.demo-tabs button:focus-visible,
+.demo-mobile-tabs button:focus-visible,.demo-module-list button:focus-visible,
+.demo-footer button:focus-visible{outline:2px solid #d1e5ff;outline-offset:3px}
+@media(max-width:1100px){
+  .demo-layout{grid-template-columns:minmax(0,1fr)}
+  .demo-map-scroller{min-height:490px;max-height:530px}
+  .demo-inspector{border-left:0;border-top:1px solid #34465c;max-height:none}
+}
+@media(max-width:800px){
+  .demo-shell{padding:0;max-width:100vw}
+  .demo-header{border-radius:0;padding:13px 14px;gap:10px}
+  .demo-brand{gap:10px}
+  .demo-emblem{width:38px;height:38px}
+  .demo-eyebrow{font-size:10px}
+  h1{font-size:20px}
+  .demo-summary span{font-size:10px;padding:5px 8px}
+  .demo-intro{padding:10px 14px;font-size:12px}
+  .demo-tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;padding:8px}
+  .demo-tabs button{flex:1 0 auto;min-height:44px;padding:10px}
+  .demo-mobile-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));position:sticky;top:0;z-index:6;background:#192942;border-bottom:1px solid #45607c;padding:7px;gap:7px}
+  .demo-mobile-tabs button{min-height:44px;background:#213651;border:1px solid #405c7a;color:#c0d5ee;border-radius:8px;font-size:14px}
+  .demo-mobile-tabs button.chosen{background:#42658a;border-color:#8eafd2;color:#fff}
+  .demo-layout{display:block;min-height:350px}
+  .demo-layout .demo-canvas-pane,.demo-layout .demo-inspector,.demo-layout .demo-module-browser{display:none}
+  .demo-layout.panel-modules .demo-module-browser{display:block}
+  .demo-layout.panel-map .demo-canvas-pane{display:block}
+  .demo-layout.panel-details .demo-inspector{display:block}
+  .demo-module-browser{padding:14px;background:#17263b;min-height:400px}
+  .demo-search-label{display:block;color:#b8cee8;font-size:12px}
+  .demo-search-label input{display:block;min-height:44px;width:100%;margin:7px 0 12px;padding:10px 13px;border:1px solid #51708e;background:#111f32;border-radius:8px;color:#e5f2ff;font-size:16px}
+  .demo-module-list{display:grid;gap:8px}
+  .demo-module-list button{display:flex;gap:12px;align-items:center;width:100%;min-height:68px;padding:12px;text-align:left;background:#213650;border:1px solid #47607b;border-radius:10px;color:#edf5ff}
+  .demo-module-list button.selected{border-color:#b6d9ff}
+  .demo-list-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:1px solid #516d90;border-radius:9px;background:#1a2a40}
+  .demo-module-list button span:nth-child(2){flex:1;min-width:0}
+  .demo-module-list button strong{font-size:14px;display:block;margin-bottom:4px;overflow-wrap:anywhere}
+  .demo-module-list button small{font-size:12px;color:#b1c7e1}
+  .demo-chevron{font-size:23px;color:#a7bfdb}
+  .demo-inspector{padding:18px 16px}
+  .demo-inspector h2{font-size:23px}
+  .demo-description,.demo-note,.demo-relation,.demo-task span{font-size:14px}
+  .demo-relation{min-height:51px}
+  .demo-task select,.demo-idea-form input,.demo-idea-form button{min-height:44px;font-size:16px}
+  .demo-idea-trigger{min-height:46px;font-size:14px}
+  .demo-map-scroller{min-height:420px;max-height:65dvh;overscroll-behavior:contain}
+  .demo-canvas-footer{flex-wrap:wrap}
+  .demo-zoom button{min-height:44px;min-width:44px}
+  .demo-footer{border-radius:0;padding:14px;align-items:stretch}
+  .demo-footer button{min-height:44px}
+}
+@media(max-width:400px){
+  .demo-summary{width:100%}
+  .demo-summary span{flex:1;text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .demo-node{transition:none}
+}
