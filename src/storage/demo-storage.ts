@@ -1,4 +1,6 @@
 import { freshDemoState } from "../model/demo-model";
+import { initialLayouts } from "../model/canvas-views";
+import type { SavedLayouts } from "../model/canvas-views";
 import type { DemoState, DemoGraph, DemoNode, DemoLayout, Point } from "../model/demo-model";
 import { defaultProjectState, defaultSettings, initialCatalog, EXAMPLE_PROJECT } from "../model/workspace";
 import type { ProjectEntry, SettingsState, WorkspaceCatalog } from "../model/workspace";
@@ -7,6 +9,32 @@ const KEY = "atlas-public-example-v2";
 const OLD_KEY = "atlas-public-example-v1";
 const CATALOG = "atlas-demo-project-catalog-v1";
 const SETTINGS = "atlas-demo-settings-v1";
+const VIEWS_PREFIX="atlas-demo-canvas-views-v1-";
+export function loadSavedLayouts(projectId:string,layout:DemoLayout):SavedLayouts {
+  const fallback=initialLayouts(layout);
+  try {
+    const raw=localStorage.getItem(VIEWS_PREFIX+projectId);
+    if(raw){
+      const value:unknown=JSON.parse(raw);
+      if(value && typeof value==="object"){
+        const v=value as Partial<SavedLayouts>;
+        if(v.version===1 && Array.isArray(v.views) && v.views.length>=1 && v.views.length<=30 &&
+          typeof v.activeId==="string" && v.views.some(item=>item.id==="overview") &&
+          v.views.some(item=>item.id===v.activeId) &&
+          v.views.every(item=>item && typeof item.id==="string" && typeof item.title==="string" &&
+            item.layout && typeof item.layout.positions==="object")){
+            return v as SavedLayouts;
+        }
+      }
+    }
+  } catch { /* invalid or unavailable browser storage */ }
+  return fallback;
+}
+export function saveSavedLayouts(projectId:string,views:SavedLayouts):boolean {
+  try {localStorage.setItem(VIEWS_PREFIX+projectId,JSON.stringify(views));return true;}
+  catch{return false;}
+}
+
 const projectKey = (id: string) => "atlas-demo-project-v1-"+id;
 export function loadCatalog(): WorkspaceCatalog {
   try {

@@ -92,3 +92,23 @@ fachlichen Projektgraphen unverändert lassen.
 Projektdaten, Hierarchie und Darstellung sowie Settings-Scopes.
 `npm run build` prüft TypeScript und erzeugt das statische Bundle.
 Die Gesten sollten zusätzlich auf echten Handys und Tablets getestet werden.
+
+## Mehrere lokale Canvas-Layouts
+
+Die öffentliche Demo bildet jetzt die serverseitige Atlas-Ansichtsverwaltung
+als **getrennte, rein browserlokale Vorschau** nach. Im Projekt können
+benannte Layouts aus der aktuellen Anordnung kopiert, gewechselt,
+umbenannt oder gelöscht werden. Die Standardansicht ist geschützt.
+
+Der fachliche Graph bleibt bei allen Layouts identisch.
+Um den Unterschied auf dem Handy nachvollziehen zu können, lässt sich
+die Position des ausgewählten Moduls in seiner Kurzinfo mit vier
+Richtungstasten verändern. Nach einem Layoutwechsel sind die
+unterschiedlichen Positionen weiterhin erhalten.
+
+Die Darstellungstabs `Architektur`, `Abhängigkeiten` und `Fortschritt`
+filtern Beziehungen bzw. Kennzahlen; sie sind **nicht** dasselbe wie
+die benannten Layouts. Alles wird ausschließlich im Browser
+gespeichert. Es wird **keine Verbindung** zur privaten PostgreSQL-API
+hergestellt. Browserdaten können gelöscht werden, ohne dass das
+echte Atlas-Projekt verändert wird.

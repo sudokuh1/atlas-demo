@@ -3,9 +3,11 @@ import { createRoot } from "react-dom/client";
 import { appendIdea, changeTaskStatus, connectedRelations, openTaskCount } from "./model/demo-model";
 import type { DemoState, Status, View, DemoNode } from "./model/demo-model";
 import { moduleTree } from "./model/module-tree";
+import { addLayout, initialLayouts, OVERVIEW_ID, removeLayout, renameLayout, selectedLayout, withActiveLayout } from "./model/canvas-views";
+import type { SavedLayouts } from "./model/canvas-views";
 import { defaultProjectState, newProjectEntry, projectSettings, updateProjectSettings } from "./model/workspace";
 import type { ProjectEntry, SettingsState, WorkspaceCatalog } from "./model/workspace";
-import { loadCatalog, loadProjectState, loadSettings, saveCatalog, saveProjectState, saveSettings } from "./storage/demo-storage";
+import { loadCatalog, loadProjectState, loadSettings, loadSavedLayouts, saveCatalog, saveProjectState, saveSavedLayouts, saveSettings } from "./storage/demo-storage";
 import { DemoCanvas } from "./ui/DemoCanvas";
 import { DemoIcon, NodeIcon } from "./ui/DemoIcons";
 import { ModuleDetails } from "./ui/ModuleDetails";
@@ -21,6 +23,9 @@ function App(){
   const [screen,setScreen]=useState<Screen>("projects");
   const [project,setProject]=useState<ProjectEntry|null>(null);
   const [data,setData]=useState<DemoState|null>(null);
+  const [layouts,setLayouts]=useState<SavedLayouts|null>(null);
+  const [layoutTitle,setLayoutTitle]=useState("");
+  const [layoutError,setLayoutError]=useState("");
   const [selected,setSelected]=useState("");
   const [peek,setPeek]=useState<string|null>(null);
   const [detail,setDetail]=useState<string|null>(null);
@@ -39,6 +44,11 @@ function App(){
     if(project && data)setPersisted(saveProjectState(project.id,data));
   },[project,data]);
   useEffect(()=>{
+    if(project && data && layouts){
+      setPersisted(saveSavedLayouts(project.id,withActiveLayout(layouts,data.layout)));
+    }
+  },[project,data,layouts]);
+  useEffect(()=>{
     const onKey=(e:KeyboardEvent)=>{
       if(e.key==="Escape"){setDetail(null);setPeek(null);}
     };
@@ -47,7 +57,10 @@ function App(){
   },[]);
   function openProject(entry:ProjectEntry){
     const next=loadProjectState(entry);
-    setProject(entry);setData(next);
+    const saved=loadSavedLayouts(entry.id,next.layout);
+    const activeLayout=selectedLayout(saved,saved.activeId,next.graph,next.layout);
+    setLayouts(saved);setLayoutTitle("");setLayoutError("");
+    setProject(entry);setData({...next,layout:activeLayout});
     setSelected(next.graph.nodes[0]?.id??"");
     setView(projectSettings(settings,entry.id).defaultView);
     setExpanded(new Set(next.graph.nodes.filter(n=>n.kind==="project").map(n=>n.id)));
@@ -79,7 +92,50 @@ function App(){
   }
   function reset(){
     if(!project||!confirm("Änderungen an diesem Beispielprojekt zurücksetzen?"))return;
-    setData(defaultProjectState(project));setPeek(null);setDetail(null);
+    const next=defaultProjectState(project);
+    setData(next);setLayouts(initialLayouts(next.layout));
+    setPeek(null);setDetail(null);setLayoutError("");
+  }
+  function changeLayout(id:string) {
+    if(!data||!layouts||!layouts.views.some(v=>v.id===id))return;
+    const snapshot=withActiveLayout(layouts,data.layout);
+    const next=selectedLayout(snapshot,id,data.graph,data.layout);
+    setLayouts({...snapshot,activeId:id});
+    setData({...data,layout:next});
+    setPeek(null);setDetail(null);setLayoutError("");
+  }
+  function copyLayout() {
+    if(!data||!layouts)return;
+    try {
+      const next=addLayout(withActiveLayout(layouts,data.layout),crypto.randomUUID(),layoutTitle,data.layout);
+      setLayouts(next);setData({...data,layout:structuredClone(data.layout)});
+      setLayoutTitle("");setLayoutError("");
+    } catch(e){setLayoutError(String(e instanceof Error?e.message:e))}
+  }
+  function editLayoutTitle() {
+    if(!layouts||layouts.activeId===OVERVIEW_ID)return;
+    const target=layouts.views.find(v=>v.id===layouts.activeId);
+    const title=prompt("Ansicht umbenennen",target?.title??"");
+    if(title===null)return;
+    try {setLayouts(renameLayout(withActiveLayout(layouts,data!.layout),layouts.activeId,title));setLayoutError("");}
+    catch(e){setLayoutError(String(e instanceof Error?e.message:e))}
+  }
+  function deleteLayout() {
+    if(!layouts||!data||layouts.activeId===OVERVIEW_ID)return;
+    if(!confirm("Diese Layoutansicht entfernen? Module und Aufgaben bleiben bestehen."))return;
+    const next=removeLayout(withActiveLayout(layouts,data.layout),layouts.activeId);
+    setData({...data,layout:selectedLayout(next,next.activeId,data.graph,data.layout)});
+    setLayouts(next);setPeek(null);setLayoutError("");
+  }
+  function shiftNode(id:string,dx:number,dy:number){
+    if(!data)return;
+    setData(previous=>{
+      if(!previous)return previous;
+      const p=previous.layout.positions[id]??{x:0,y:0};
+      return {...previous,layout:{
+        positions:{...previous.layout.positions,[id]:{x:p.x+dx,y:p.y+dy}}
+      }};
+    });
   }
   function toggleExpanded(id:string){
     setExpanded(previous=>{const next=new Set(previous);if(next.has(id))next.delete(id);else next.add(id);return next;});
@@ -200,6 +256,20 @@ function App(){
         </nav>
         <span className="atlas-toolbar-hint">Canvas und Modulliste zeigen denselben Projektgraphen.</span>
       </div>
+      {layouts&&<div className="atlas-layout-toolbar">
+        <label>Gespeichertes Layout
+          <select value={layouts.activeId} onChange={e=>changeLayout(e.target.value)}>
+            {layouts.views.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
+          </select>
+        </label>
+        <input maxLength={80} aria-label="Neues Layout benennen" value={layoutTitle}
+          placeholder="Neue Ansicht, z. B. Entwicklung" onChange={e=>setLayoutTitle(e.target.value)}/>
+        <button onClick={copyLayout} disabled={!layoutTitle.trim()||layouts.views.length>=30}>Kopie anlegen</button>
+        <button onClick={editLayoutTitle} disabled={layouts.activeId===OVERVIEW_ID}>Umbenennen</button>
+        <button onClick={deleteLayout} disabled={layouts.activeId===OVERVIEW_ID}>Entfernen</button>
+        <small>Nur die Positionen sind ansichtsbezogen. Module und Beziehungen bleiben gemeinsam.</small>
+        {layoutError&&<p className="atlas-layout-error" role="alert">{layoutError}</p>}
+      </div>}
       <nav className="atlas-mobile-switch" aria-label="Projektbereich wählen">
         <button className={panel==="modules"?"chosen":""} aria-pressed={panel==="modules"}
           onClick={()=>{setPanel("modules");setPeek(null);}}>Module</button>
@@ -249,6 +319,15 @@ function App(){
             <span>{summary.tasks.filter(t=>t.status!=="done").length} offene Aufgaben</span>
             <span>{connectedRelations(graph,summary.id).length} Beziehungen</span>
             <span>{summary.files.length} Quellen</span>
+          </div>
+          <div className="atlas-layout-nudge">
+            <span>Position in diesem Layout</span>
+            <div role="group" aria-label="Position des gewählten Moduls verschieben">
+              <button aria-label="Nach links verschieben" onClick={()=>shiftNode(summary.id,-70,0)}>←</button>
+              <button aria-label="Nach oben verschieben" onClick={()=>shiftNode(summary.id,0,-70)}>↑</button>
+              <button aria-label="Nach unten verschieben" onClick={()=>shiftNode(summary.id,0,70)}>↓</button>
+              <button aria-label="Nach rechts verschieben" onClick={()=>shiftNode(summary.id,70,0)}>→</button>
+            </div>
           </div>
           <div className="atlas-quick-actions">
             <button className="atlas-secondary" onClick={()=>showOnMap(summary.id)}>Auf Karte</button>
