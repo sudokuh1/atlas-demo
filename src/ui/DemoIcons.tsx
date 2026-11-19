@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { NodeKind } from "../model/demo-model";
 
-type IconName = "project" | "person" | "globe" | "interface" | "outfits" | "motion" | "tree" | "home" | "wheel" | "idea" | "module" | "folder" | "network";
+type IconName = "project" | "person" | "globe" | "interface" | "outfits" | "motion" | "tree" | "home" | "wheel" | "idea" | "module" | "folder" | "network" | "lock" | "unlock";
 const shapes: Record<IconName, ReactNode> = {
   project: <><rect x="3" y="8" width="18" height="11" rx="3"/><path d="M7 12h3m-1.5-1.5v3M16 11h.01M18 14h.01"/></>,
   person: <><circle cx="12" cy="5" r="2.3"/><path d="M8 20v-6l-2-3 2-2h8l2 2-2 3v6M9 14h6m-3 0v6"/></>,
@@ -15,7 +15,9 @@ const shapes: Record<IconName, ReactNode> = {
   idea: <><path d="M9 18h6M10 21h4M8 14c-2-1.5-3-3.2-3-5a7 7 0 0 1 14 0c0 2-1.2 3.8-3 5l-1 3H9z"/></>,
   module: <><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></>,
   folder: <><path d="M3 6h7l2 2h9v12H3z"/></>,
-  network: <><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4"/></>
+  network: <><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M5 16v-4h14v4"/></>,
+  lock: <><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></>,
+  unlock: <><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 4-4h1a4 4 0 0 1 4 4"/></>
 };
 const byId: Record<string,IconName> = {
   game:"project",character:"person",world:"globe",interface:"interface",

@@ -246,3 +246,56 @@ button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-v
   .atlas-layout-toolbar button{min-height:44px}
   .atlas-layout-nudge button{min-width:44px;min-height:44px}
 }
+
+/* Unbounded camera: SVG edges and nodes share one movable world transform.
+   The viewport only clips the screen, never constrains world coordinates. */
+.atlas-canvas-viewport{
+  position:relative;
+  overflow:hidden;
+  touch-action:none;
+  cursor:grab;
+  background-image:radial-gradient(var(--atlas-border) .85px,transparent .85px);
+  user-select:none;
+}
+.atlas-canvas-viewport:active{cursor:grabbing}
+.atlas-board{
+  position:absolute;left:0;top:0;
+  width:0;height:0;
+  overflow:visible;
+  transform-origin:0 0;
+  will-change:transform;
+}
+.atlas-board svg{overflow:visible;pointer-events:none}
+.atlas-board .atlas-graph-node{
+  touch-action:none;
+  cursor:pointer;
+}
+.atlas-board .atlas-graph-node.movable{cursor:grab}
+.atlas-board .atlas-graph-node.movable:active{cursor:grabbing}
+.atlas-canvas-edit{
+  position:absolute;
+  z-index:6;
+  bottom:51px;
+  left:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:43px;
+  border:1px solid var(--atlas-border);
+  border-radius:6px;
+  background:var(--atlas-panel);
+  color:var(--atlas-text);
+  padding:8px 12px;
+  font-size:12px;
+  box-shadow:0 4px 14px #0002;
+}
+.atlas-canvas-edit.unlocked{
+  border-color:var(--atlas-accent);
+  background:var(--atlas-raised);
+}
+.atlas-layout-nudge button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:700px){
+  .atlas-canvas-edit{bottom:55px;left:10px;min-height:44px}
+  .atlas-canvas-caption{line-height:1.6}
+}

@@ -9,7 +9,7 @@ import ts from "typescript";
 const base=fileURLToPath(new URL("../src/model/",import.meta.url));
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),"atlas-demo-tests-"));
 try {
-  for(const file of ["demo-model","module-tree","workspace","canvas-views"]){
+  for(const file of ["demo-model","module-tree","workspace","canvas-views","canvas-camera"]){
     const input=fs.readFileSync(path.join(base,file+".ts"),"utf8");
     const js=ts.transpileModule(input,{compilerOptions:{
       module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022
@@ -20,6 +20,7 @@ try {
   const tree=await import(pathToFileURL(path.join(temp,"module-tree.mjs")));
   const workspace=await import(pathToFileURL(path.join(temp,"workspace.mjs")));
   const views=await import(pathToFileURL(path.join(temp,"canvas-views.mjs")));
+  const camera=await import(pathToFileURL(path.join(temp,"canvas-camera.mjs")));
   const graph=model.freshDemoState();
   assert.ok(graph.graph.nodes.length>=9);
   assert.deepEqual(Object.keys(graph.graph.nodes[0]).includes("x"),false,"positions cannot leak into module");
@@ -63,7 +64,38 @@ try {
   assert.equal(deleted.activeId,"overview");
   assert.equal(deleted.views.length,1);
   assert.throws(()=>views.removeLayout(deleted,"overview"),/nicht gelöscht/);
-  console.log("Demo graph, hierarchy, project, settings and independent canvas layouts OK");
+  const free={x:-1430,y:3650,zoom:0.4};
+  const world={x:-700,y:4900};
+  const screen=camera.worldToScreen(world,free);
+  assert.deepEqual(camera.screenToWorld(screen,free),world,
+    "world-to-screen coordinates must work in every direction, including negative positions");
+  const center={x:180,y:220};
+  const before=camera.screenToWorld(center,free);
+  const zoomed=camera.zoomCameraAt(free,1.8,center);
+  const after=camera.screenToWorld(center,zoomed);
+  assert.ok(Math.abs(before.x-after.x)<1e-8 && Math.abs(before.y-after.y)<1e-8,
+    "zooming must keep the pointer's world position anchored");
+  assert.equal(camera.clampZoom(0),camera.MIN_ZOOM);
+  assert.equal(camera.clampZoom(100),camera.MAX_ZOOM);
+  const panned=camera.panCamera(free,-100000,200000);
+  assert.equal(panned.x,free.x-100000,"camera must not have a left boundary");
+  assert.equal(panned.y,free.y+200000,"camera must not have a bottom boundary");
+  const nodes={a:{x:-2600,y:-1400},b:{x:5000,y:3600}};
+  const fitted=camera.fitCamera(nodes,["a","b"],390,550);
+  for(const point of Object.values(nodes)){
+    const topLeft=camera.worldToScreen(point,fitted);
+    const bottomRight=camera.worldToScreen({
+      x:point.x+camera.NODE_WIDTH,y:point.y+camera.NODE_HEIGHT
+    },fitted);
+    assert.ok(topLeft.x>=-1 && topLeft.y>=-1 &&
+      bottomRight.x<=391 && bottomRight.y<=551,
+      "fit must include remote nodes and negative coordinates");
+  }
+  const focus=camera.centerCameraOn(fitted,{x:-2000,y:-1000},390,550);
+  assert.deepEqual(camera.worldToScreen({x:-2000,y:-1000},focus),{x:195,y:275});
+  assert.equal(graph.graph.nodes[0].id,"game",
+    "camera operations must never change canonical module IDs");
+  console.log("Demo graph, hierarchy, project, settings, layouts and unbounded camera OK");
 }finally{
   fs.rmSync(temp,{recursive:true,force:true});
 }
