@@ -333,3 +333,15 @@ button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-v
  .atlas-timeline-open{display:none}
  .atlas-workspace.panel-timeline .atlas-project-timeline{display:block}
 }
+
+/* A second header action must not push the project title off small screens. */
+@media(max-width:700px){
+  .atlas-topbar{padding:0 10px;gap:8px}
+  .atlas-topbar-actions{gap:6px;flex:none}
+  .atlas-wordmark small,.atlas-crumb,.atlas-crumb-divider{display:none}
+  .atlas-topbar-context{flex:1;min-width:0;gap:4px}
+  .atlas-topbar-context strong{max-width:100%;font-size:12px}
+  .atlas-top-action{flex:none}
+  /* Keep the editing lock visible without scrolling to the foot of the canvas. */
+  .atlas-canvas-edit{top:65px;bottom:auto;left:10px}
+}
