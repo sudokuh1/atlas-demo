@@ -7,7 +7,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test:architecture": "node scripts/test-architecture.mjs"
+    "test:architecture": "node scripts/test-architecture.mjs",
+    "test:timeline": "node scripts/test-timeline.mjs"
   },
   "dependencies": {
     "react": "19.1.1",

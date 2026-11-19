@@ -311,3 +311,37 @@ button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-v
   pointer-events:none;
 }
 .atlas-quick-icon > svg{position:static;display:block;flex:none}
+
+/* Project timeline is a workbench view, not a canvas graph mode. */
+.atlas-roadmap-page{width:100%;max-width:100%;flex:1;min-width:0;margin:0 auto;padding-top:8px}
+.atlas-roadmap-page>.atlas-back-link{margin:14px 22px 0}
+.atlas-roadmap-promo{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:21px 23px;margin:26px 0 15px;background:var(--atlas-surface);border:1px solid var(--atlas-border);border-radius:8px}
+.atlas-roadmap-promo>div{flex:1;min-width:210px}
+.atlas-roadmap-promo h2{font-size:18px;margin:7px 0 7px}
+.atlas-roadmap-promo p{font-size:12px;line-height:1.65;color:var(--atlas-muted);max-width:640px}
+.atlas-roadmap-promo button{white-space:nowrap}
+.atlas-timeline-open{min-height:38px;padding:7px 13px;background:var(--atlas-control);border:1px solid var(--atlas-border);color:var(--atlas-text);border-radius:6px;font-size:12px}
+.atlas-timeline-open[aria-pressed="true"]{border-color:var(--atlas-accent)}
+.atlas-workspace.panel-timeline{display:block;min-width:0;width:100%}
+.atlas-workspace.panel-timeline .atlas-module-panel,.atlas-workspace.panel-timeline .atlas-canvas-area{display:none}
+.atlas-project-timeline{display:block;min-width:0;width:100%}
+@media(max-width:700px){
+ .atlas-mobile-switch{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .atlas-roadmap-page>.atlas-back-link{margin:12px 14px 0}
+ .atlas-roadmap-promo{align-items:stretch;flex-direction:column;padding:18px}
+ .atlas-roadmap-promo button{white-space:normal;min-height:44px}
+ .atlas-timeline-open{display:none}
+ .atlas-workspace.panel-timeline .atlas-project-timeline{display:block}
+}
+
+/* A second header action must not push the project title off small screens. */
+@media(max-width:700px){
+  .atlas-topbar{padding:0 10px;gap:8px}
+  .atlas-topbar-actions{gap:6px;flex:none}
+  .atlas-wordmark small,.atlas-crumb,.atlas-crumb-divider{display:none}
+  .atlas-topbar-context{flex:1;min-width:0;gap:4px}
+  .atlas-topbar-context strong{max-width:100%;font-size:12px}
+  .atlas-top-action{flex:none}
+  /* Keep the editing lock visible without scrolling to the foot of the canvas. */
+  .atlas-canvas-edit{top:65px;bottom:auto;left:10px}
+}

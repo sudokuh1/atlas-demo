@@ -9,11 +9,16 @@ import { defaultProjectState, newProjectEntry, projectSettings, updateProjectSet
 import type { ProjectEntry, SettingsState, WorkspaceCatalog } from "./model/workspace";
 import { loadCatalog, loadProjectState, loadSettings, loadSavedLayouts, saveCatalog, saveProjectState, saveSavedLayouts, saveSettings } from "./storage/demo-storage";
 import { DemoCanvas } from "./ui/DemoCanvas";
+import { ProjectTimeline } from "./ui/ProjectTimeline";
+import { atlasRoadmap,ATLAS_ROADMAP_UPDATED } from "./model/atlas-roadmap";
+import { appendTimelineEntry,defaultProjectTimeline,removeTimelineEntry,updateTimelineEntry } from "./model/project-timeline";
+import type { TimelineDocument,TimelineDraft } from "./model/project-timeline";
+import { loadProjectTimeline,saveProjectTimeline } from "./storage/project-timeline";
 import { DemoIcon, NodeIcon } from "./ui/DemoIcons";
 import { ModuleDetails } from "./ui/ModuleDetails";
 import "./demo.css";
 
-type Screen = "projects" | "project" | "settings";
+type Screen = "projects" | "project" | "settings" | "roadmap";
 const kinds={project:"Projekt",area:"Bereich",module:"Modul",idea:"Idee"};
 const status={planned:"Geplant",active:"In Arbeit",blocked:"Blockiert",done:"Erledigt"};
 const viewTitles:Record<View,string>={architecture:"Architektur",dependencies:"Abhängigkeiten",progress:"Fortschritt"};
@@ -24,12 +29,13 @@ function App(){
   const [project,setProject]=useState<ProjectEntry|null>(null);
   const [data,setData]=useState<DemoState|null>(null);
   const [layouts,setLayouts]=useState<SavedLayouts|null>(null);
+  const [timeline,setTimeline]=useState<TimelineDocument|null>(null);
   const [layoutTitle,setLayoutTitle]=useState("");
   const [layoutError,setLayoutError]=useState("");
   const [selected,setSelected]=useState("");
   const [peek,setPeek]=useState<string|null>(null);
   const [detail,setDetail]=useState<string|null>(null);
-  const [panel,setPanel]=useState<"modules"|"map">("modules");
+  const [panel,setPanel]=useState<"modules"|"map"|"timeline">("modules");
   const [view,setView]=useState<View>("architecture");
   const [editing,setEditing]=useState(false);
   const [focusToken,setFocusToken]=useState(0);
@@ -37,7 +43,7 @@ function App(){
   const [filter,setFilter]=useState("");
   const [projectName,setProjectName]=useState("");
   const [persisted,setPersisted]=useState(true);
-  const settingsReturn=useRef<"projects"|"project">("projects");
+  const settingsReturn=useRef<"projects"|"project"|"roadmap">("projects");
   useEffect(()=>{setPersisted(saveCatalog(catalog));},[catalog]);
   useEffect(()=>{setPersisted(saveSettings(settings));},[settings]);
   useEffect(()=>{
@@ -48,6 +54,9 @@ function App(){
       setPersisted(saveSavedLayouts(project.id,withActiveLayout(layouts,data.layout)));
     }
   },[project,data,layouts]);
+  useEffect(()=>{
+    if(project&&timeline)setPersisted(saveProjectTimeline(project.id,timeline));
+  },[project,timeline]);
   useEffect(()=>{
     const onKey=(e:KeyboardEvent)=>{
       if(e.key==="Escape"){setDetail(null);setPeek(null);}
@@ -60,6 +69,7 @@ function App(){
     const saved=loadSavedLayouts(entry.id,next.layout);
     const activeLayout=selectedLayout(saved,saved.activeId,next.graph,next.layout);
     setLayouts(saved);setLayoutTitle("");setLayoutError("");
+    setTimeline(loadProjectTimeline(entry));
     setProject(entry);setData({...next,layout:activeLayout});
     setSelected(next.graph.nodes[0]?.id??"");
     setView(projectSettings(settings,entry.id).defaultView);
@@ -67,8 +77,11 @@ function App(){
     setFilter("");setPeek(null);setDetail(null);setEditing(false);setFocusToken(0);setPanel("modules");setScreen("project");
   }
   function home(){setScreen("projects");setPeek(null);setDetail(null);setEditing(false);}
+  function openRoadmap(){
+    setScreen("roadmap");setPeek(null);setDetail(null);setEditing(false);
+  }
   function openSettings(){
-    settingsReturn.current=screen==="project"?"project":"projects";
+    settingsReturn.current=screen==="project"?"project":screen==="roadmap"?"roadmap":"projects";
     setScreen("settings");setPeek(null);setDetail(null);
   }
   function choose(id:string){setSelected(id);setPeek(id);setDetail(null);}
@@ -94,6 +107,7 @@ function App(){
     if(!project||!confirm("Änderungen an diesem Beispielprojekt zurücksetzen?"))return;
     const next=defaultProjectState(project);
     setData(next);setLayouts(initialLayouts(next.layout));
+    setTimeline(defaultProjectTimeline(project));
     setPeek(null);setDetail(null);setLayoutError("");setEditing(false);setFocusToken(0);
   }
   function changeLayout(id:string) {
@@ -140,6 +154,21 @@ function App(){
   function toggleExpanded(id:string){
     setExpanded(previous=>{const next=new Set(previous);if(next.has(id))next.delete(id);else next.add(id);return next;});
   }
+  function addTimelineStep(draft:TimelineDraft):string|null {
+    if(!timeline)return "Kein Projektverlauf geladen.";
+    try{
+      const next=appendTimelineEntry(timeline,draft,crypto.randomUUID(),new Date().toISOString());
+      setTimeline(next);return null;
+    }catch(error){return String(error instanceof Error?error.message:error);}
+  }
+  function editTimelineStep(id:string,draft:TimelineDraft):string|null {
+    if(!timeline)return "Kein Projektverlauf geladen.";
+    try{setTimeline(updateTimelineEntry(timeline,id,draft));return null;}
+    catch(error){return String(error instanceof Error?error.message:error);}
+  }
+  function deleteTimelineStep(id:string){
+    setTimeline(previous=>previous?removeTimelineEntry(previous,id):previous);
+  }
   const graph=data?.graph;
   const active=graph?.nodes.find(n=>n.id===(detail??peek??selected));
   const summary=graph?.nodes.find(n=>n.id===peek);
@@ -156,9 +185,14 @@ function App(){
           <span className="atlas-crumb-divider">/</span><strong>{project.title}</strong>
         </>}
         {screen==="settings"&&<span>Einstellungen</span>}
+        {screen==="roadmap"&&<span>Weg bis zum MVP</span>}
       </div>
       <div className="atlas-topbar-actions">
         <span className="atlas-offline">LOKALER DEMOMODUS</span>
+        <button className="atlas-top-action" onClick={openRoadmap}
+          aria-label="Atlas-MVP-Zeitstrahl öffnen">
+          <DemoIcon name="network" size={19}/><span>Atlas-MVP</span>
+        </button>
         <button className="atlas-top-action" onClick={openSettings} aria-label="Einstellungen öffnen">
           <DemoIcon name="interface" size={19}/><span>Einstellungen</span>
         </button>
@@ -193,7 +227,24 @@ function App(){
           <button type="submit" disabled={!projectName.trim()||catalog.projects.length>=40}>Anlegen</button>
         </div>
       </form>
+      <section className="atlas-roadmap-promo">
+        <div>
+          <span className="atlas-overline">ATLAS / ENTWICKLUNG</span>
+          <h2>Weg bis zum MVP</h2>
+          <p>Vom Grundgedanken über bereits umgesetzte Schritte bis zur Abnahme. Einschließlich Fehlern, Entscheidungen und Lösungen.</p>
+        </div>
+        <button className="atlas-secondary" onClick={openRoadmap}>Entwicklungszeitstrahl ansehen</button>
+      </section>
       <p className="atlas-home-note">Diese Website ist eine eigenständige Vorschau ohne Anmeldung, Datenbank oder Zugriff auf private Repositories.</p>
+    </main>}
+
+    {screen==="roadmap"&&<main className="atlas-roadmap-page">
+      <button className="atlas-back-link" onClick={home}>← Zur Projektübersicht</button>
+      <ProjectTimeline title="Atlas – vom Grundgedanken zum MVP"
+        description="Der aktuelle Entwicklungsplan. Bereits abgeschlossene Etappen enthalten belegbare Ergebnisse; offene Schritte besitzen noch keine erfundenen Resultate."
+        entries={atlasRoadmap.entries}
+        note={"Kuratierte Momentaufnahme vom "+ATLAS_ROADMAP_UPDATED+
+          ". Keine Live-Synchronisation mit GitHub und kein revisionssicheres Audit-Log."}/>
     </main>}
 
     {screen==="settings"&&<main className="atlas-settings">
@@ -252,9 +303,13 @@ function App(){
         <nav className="atlas-view-tabs" aria-label="Ansicht wählen">
           {(["architecture","dependencies","progress"] as View[]).map(name=>
             <button key={name} aria-pressed={name===view} className={name===view?"chosen":""}
-              onClick={()=>{setView(name);setPeek(null);}}>{viewTitles[name]}</button>)}
+              onClick={()=>{setView(name);setPeek(null);setPanel("map");}}>{viewTitles[name]}</button>)}
         </nav>
         <span className="atlas-toolbar-hint">Canvas und Modulliste zeigen denselben Projektgraphen.</span>
+        <button className="atlas-timeline-open" aria-pressed={panel==="timeline"}
+          onClick={()=>{setPanel(panel==="timeline"?"map":"timeline");setPeek(null);}}>
+          {panel==="timeline"?"Zur Projektkarte":"Projektverlauf"}
+        </button>
       </div>
       {layouts&&<div className="atlas-layout-toolbar">
         <label>Gespeichertes Layout
@@ -275,6 +330,8 @@ function App(){
           onClick={()=>{setPanel("modules");setPeek(null);}}>Module</button>
         <button className={panel==="map"?"chosen":""} aria-pressed={panel==="map"}
           onClick={()=>{setPanel("map");setPeek(null);}}>Canvas</button>
+        <button className={panel==="timeline"?"chosen":""} aria-pressed={panel==="timeline"}
+          onClick={()=>{setPanel("timeline");setPeek(null);}}>Verlauf</button>
       </nav>
       <div className={"atlas-workspace panel-"+panel}>
         <aside className="atlas-module-panel" aria-label="Modulnavigator">
@@ -313,7 +370,16 @@ function App(){
             active={panel==="map"} focusToken={focusToken}
             showTaskCounts={scope?.showTaskCounts??true}/>
         </div>
-        {summary&&<section className="atlas-quick-card" aria-label={"Kurzinfo zu "+summary.title}>
+        {timeline&&panel==="timeline"&&<div className="atlas-project-timeline">
+          <ProjectTimeline title={project.title+" – Projektverlauf"}
+            description="Entwicklungsschritte, Entscheidungen, aufgetretene Probleme und deren Behandlung. Neue Einträge bleiben in diesem Browser."
+            entries={timeline.entries}
+            note={project.kind==="example"?
+              "Diese Anfangsschritte sind fiktive Beispieldaten. Änderungen sind nur lokal und noch kein revisionssicheres Audit.":
+              "Die Einträge werden nur im aktuellen Browser gespeichert; eine PostgreSQL-API ist als nächster MVP-Schritt geplant."}
+            onAdd={addTimelineStep} onUpdate={editTimelineStep} onRemove={deleteTimelineStep}/>
+        </div>}
+        {summary&&panel!=="timeline"&&<section className="atlas-quick-card" aria-label={"Kurzinfo zu "+summary.title}>
           <div className="atlas-quick-head">
             <span className="atlas-quick-icon"><NodeIcon id={summary.id} kind={summary.kind} size={20}/></span>
             <div><small>{kinds[summary.kind]} · {status[summary.status]}</small><h2>{summary.title}</h2></div>
