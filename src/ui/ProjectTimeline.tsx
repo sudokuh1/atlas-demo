@@ -38,6 +38,17 @@ export function ProjectTimeline({title,description,entries,note,onAdd,onUpdate,o
  const [error,setError]=useState("");
  const [showForm,setShowForm]=useState(false);
  const counts=timelineCounts({version:1,entries});
+ const current=entries.find(entry=>entry.status==="active")??
+   entries.find(entry=>entry.status==="blocked")??null;
+ function showCurrent(){
+  if(!current||!scroller.current)return;
+  const node=[...scroller.current.querySelectorAll<HTMLElement>("[data-timeline-id]")].
+    find(item=>item.dataset.timelineId===current.id);
+  node?.scrollIntoView({
+   behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth",
+   block:"nearest",inline:"center"
+  });
+ }
  function edit(entry:TimelineEntry){
   setDraft({
    title:entry.title,goal:entry.goal,result:entry.result,problem:entry.problem,
@@ -69,6 +80,11 @@ export function ProjectTimeline({title,description,entries,note,onAdd,onUpdate,o
     <span className="atlas-overline">PROJEKT / ZEITSTRAHL</span>
     <h2>{title}</h2>
     <p>{description}</p>
+    {current&&<div className="atlas-timeline-current">
+      <span>AKTUELL</span>
+      <strong>{current.phase?current.phase+" · ":""}{current.title}</strong>
+      <button type="button" onClick={showCurrent}>Aktuellen Schritt anzeigen</button>
+    </div>}
    </div>
    <div className="atlas-timeline-counters" aria-label="Schrittstatus">
     <span>{counts.done} abgeschlossen</span>
@@ -86,7 +102,7 @@ export function ProjectTimeline({title,description,entries,note,onAdd,onUpdate,o
    </div>
   </div>
   <ol className="atlas-timeline-track" ref={scroller} tabIndex={0} aria-label="Meilensteine in zeitlicher Reihenfolge">
-   {entries.map((entry,i)=><li className={"atlas-timeline-step status-"+entry.status} key={entry.id}>
+   {entries.map((entry,i)=><li className={"atlas-timeline-step status-"+entry.status} data-timeline-id={entry.id} key={entry.id}>
     <div className="atlas-timeline-dot" aria-hidden="true"/>
     <article className="atlas-timeline-card">
      <div className="atlas-timeline-metadata">

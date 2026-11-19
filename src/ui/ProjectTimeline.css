@@ -70,3 +70,9 @@
  .atlas-timeline-card-actions button{min-height:44px}
 }
 @media(prefers-reduced-motion:reduce){.atlas-timeline-track{scroll-behavior:auto}}
+
+.atlas-timeline-current{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:15px}
+.atlas-timeline-current span{font-size:10px;letter-spacing:.9px;color:var(--atlas-accent);font-weight:700}
+.atlas-timeline-current strong{font-size:12px;font-weight:640}
+.atlas-timeline-current button{background:transparent;border:1px solid var(--atlas-border);color:var(--atlas-text);border-radius:5px;font-size:11px;min-height:38px;padding:7px 10px}
+@media(max-width:700px){.atlas-timeline-current button{min-height:44px;width:100%}}
