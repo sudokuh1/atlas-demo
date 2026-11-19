@@ -33,5 +33,9 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      # Allow the artifact service to index the newly uploaded pages bundle.
+      # Re-running this job is not safe if it creates duplicate github-pages artifacts.
+      - name: Wait for artifact indexing
+        run: sleep 15
       - id: deployment
         uses: actions/deploy-pages@v4
