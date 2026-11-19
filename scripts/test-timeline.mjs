@@ -97,5 +97,10 @@ try{
  assert.match(app,/screen==="roadmap"/);
  assert.match(app,/onAdd=\{addTimelineStep\}/);
  assert.match(app,/onUpdate=\{editTimelineStep\}/);
+ const timelineUI=fs.readFileSync(path.join(root,"ui/ProjectTimeline.tsx"),"utf8");
+ assert.match(timelineUI,/Aktuellen Schritt anzeigen/);
+ assert.match(timelineUI,/data-timeline-id=\{entry.id\}/,
+   "current-step focus must use the stable event id, not its visual index");
+
  console.log("Timeline model, chronology, editable events, storage and desktop/mobile layout contracts OK");
 }finally{fs.rmSync(tmp,{recursive:true,force:true});}
