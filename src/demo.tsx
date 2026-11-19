@@ -201,7 +201,7 @@ function App(){
       <div className="atlas-page-heading">
         <span className="atlas-overline">WORKSPACE / EINSTELLUNGEN</span>
         <h1>Einstellungen</h1>
-        <p>Die Demo speichert diese Einstellungen ausschließlich im Browser. Die produktive Atlas-API hat dafür noch keine Endpunkte.</p>
+        <p>Diese Vorschau speichert Einstellungen nur in diesem Browser. Die private Atlas-Anwendung nutzt inzwischen eigene, versionierte Settings-Endpunkte.</p>
       </div>
       <section className="atlas-settings-section">
         <span className="atlas-settings-scope">GERÄT / ERSCHEINUNGSBILD</span>
