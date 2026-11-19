@@ -40,3 +40,20 @@ noch Richtungssteuerung Layoutpositionen verändern. Beim
 Projekt-/Ansichtswechsel wird die Bearbeitung wieder gesperrt.
 Eine gewählte Layoutstruktur ist keine verpflichtende Baum- oder
 Pyramidenform. Der Fit-Befehl berücksichtigt aktuelle Koordinaten.
+
+## Entwicklungs- und Projektzeitstrahl
+
+Projektverlauf ist eine eigenständige Projektdomäne, **kein**
+Canvas-Graph und keine automatisch erzeugte Git-Commit-Liste.
+Titel, Ziel, Ergebnis, Problem, Lösung und Nachweise sind Datenfelder;
+das Layout kennt diese Felder nur als Darstellung.
+
+Die Timeline-UI verwendet dieselben Daten auf Desktop und Mobil,
+ordnet sie aber am Desktop horizontal und auf kleinen Bildschirmen
+vertikal an. Längere Berichte sind aufklappbar; Status und Ziele
+bleiben ohne Interaktion sichtbar. Geplante Schritte haben klaren
+Status, aber keine fingierte Umsetzung oder Datierung.
+
+Die kuratierte öffentliche Atlas-MVP-Roadmap ist ausdrücklich als
+Momentaufnahme gekennzeichnet. Eine echte auditierbare Historie
+benötigt später serverseitige Ereignisse, Zeitbelege und Revisionsschutz.

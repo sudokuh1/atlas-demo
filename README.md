@@ -147,3 +147,38 @@ Ein realer Touch-/Pinch-Test auf iPhone/Android/iPad steht zusätzlich
 noch aus. Die Änderungen betreffen nur die statische öffentliche
 Demo; die private produktive Atlas-App verwendet weiterhin einen
 eigenen Renderer und wird in einer folgenden Etappe migriert.
+
+## Projektverlauf und Atlas-MVP-Zeitstrahl
+
+Die Demo zeigt im oberen Navigationsbereich **Atlas-MVP** und in jedem
+Projekt die Ansicht **Verlauf**. Beide verwenden
+`src/model/project-timeline.ts` als **frameworkfreies Datenmodell**.
+
+Jeder Eintrag kann Ursprung, Entwicklungsschritt, Problem oder
+Meilenstein sein und enthält seine eigene stabile ID, Status, Titel,
+Ziel, tatsächliches Ergebnis, optionales Problem und Behandlung bzw.
+Lösung. Geplante Schritte dürfen kein erfundenes Ergebnis erhalten.
+Datum/Zeitraum, Kriterien und Referenzen sind optional.
+
+- **Desktop:** horizontaler Zeitstrahl mit Blättertasten und
+  horizontalem Scrolling, ohne das Projektlayout zu verändern.
+- **Smartphone:** vertikale, normal scrollbar angeordnete Folge
+  mit denselben Daten.
+- **Projektverlauf:** Demo-Nutzer können Schritte im aktuellen
+  Projekt anlegen, bearbeiten und löschen. Die Speicherung erfolgt
+  ausschließlich in einem eigenen `localStorage`-Adapter je Projekt,
+  unabhängig von Modulen, Aufgaben und Canvas-Layouts.
+- **Atlas-MVP:** kuratierter, **nicht automatisch synchronisierter**
+  Stand der Entwicklung von Atlas. Die Arbeitsquelle liegt im
+  privaten Repository unter `docs/MVP_ROADMAP.md` und
+  `docs/PROJECT_JOURNAL.md`. Die öffentliche Ansicht enthält
+  keine privaten Graphen, Git-Credentials oder Kontodaten.
+
+Das lokal bearbeitbare Demo-Protokoll ist **kein revisionssicheres
+Audit-Log**. Serverpersistenz, Benutzerzuordnung, Konflikterkennung
+und kontrollierte Wiederherstellung sind eigenständige Arbeitsschritte
+vor dem lokalen Produkt-MVP.
+
+`npm run test:timeline` prüft Status, Reihenfolge, unveränderliche
+Model-Operationen, projektgetrennte Browserspeicherung,
+Schema-Validierung und das responsive Darstellungsprinzip.
