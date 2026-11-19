@@ -213,7 +213,7 @@ export function DemoCanvas({
    <div className="atlas-board" style={{
     transform:`translate3d(${camera.x}px,${camera.y}px,0) scale(${camera.zoom})`
    }}>
-    <svg width="1" height="1" aria-hidden="true">
+    <svg className="atlas-connections" width="1" height="1" aria-hidden="true">
      {visibleRelations(graph,view).map((r,i)=>{
       const a=layout.positions[r.from],b=layout.positions[r.to];
       if(!a||!b)return null;
