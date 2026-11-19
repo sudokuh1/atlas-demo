@@ -31,7 +31,7 @@ function App(){
   const [detail,setDetail]=useState<string|null>(null);
   const [panel,setPanel]=useState<"modules"|"map">("modules");
   const [view,setView]=useState<View>("architecture");
-  const [zoom,setZoom]=useState(1);
+  const [editing,setEditing]=useState(false);
   const [focusToken,setFocusToken]=useState(0);
   const [expanded,setExpanded]=useState<Set<string>>(()=>new Set());
   const [filter,setFilter]=useState("");
@@ -64,9 +64,9 @@ function App(){
     setSelected(next.graph.nodes[0]?.id??"");
     setView(projectSettings(settings,entry.id).defaultView);
     setExpanded(new Set(next.graph.nodes.filter(n=>n.kind==="project").map(n=>n.id)));
-    setFilter("");setPeek(null);setDetail(null);setZoom(1);setPanel("modules");setScreen("project");
+    setFilter("");setPeek(null);setDetail(null);setEditing(false);setFocusToken(0);setPanel("modules");setScreen("project");
   }
-  function home(){setScreen("projects");setPeek(null);setDetail(null);}
+  function home(){setScreen("projects");setPeek(null);setDetail(null);setEditing(false);}
   function openSettings(){
     settingsReturn.current=screen==="project"?"project":"projects";
     setScreen("settings");setPeek(null);setDetail(null);
@@ -74,7 +74,7 @@ function App(){
   function choose(id:string){setSelected(id);setPeek(id);setDetail(null);}
   function showOnMap(id:string){
     setSelected(id);setPanel("map");setPeek(null);setFocusToken(n=>n+1);
-    setZoom(n=>Math.max(n,.45));
+
   }
   function createProject(){
     const title=projectName.trim();if(!title||catalog.projects.length>=40)return;
@@ -94,7 +94,7 @@ function App(){
     if(!project||!confirm("Änderungen an diesem Beispielprojekt zurücksetzen?"))return;
     const next=defaultProjectState(project);
     setData(next);setLayouts(initialLayouts(next.layout));
-    setPeek(null);setDetail(null);setLayoutError("");
+    setPeek(null);setDetail(null);setLayoutError("");setEditing(false);setFocusToken(0);
   }
   function changeLayout(id:string) {
     if(!data||!layouts||!layouts.views.some(v=>v.id===id))return;
@@ -102,7 +102,7 @@ function App(){
     const next=selectedLayout(snapshot,id,data.graph,data.layout);
     setLayouts({...snapshot,activeId:id});
     setData({...data,layout:next});
-    setPeek(null);setDetail(null);setLayoutError("");
+    setPeek(null);setDetail(null);setLayoutError("");setEditing(false);setFocusToken(0);
   }
   function copyLayout() {
     if(!data||!layouts)return;
@@ -125,10 +125,10 @@ function App(){
     if(!confirm("Diese Layoutansicht entfernen? Module und Aufgaben bleiben bestehen."))return;
     const next=removeLayout(withActiveLayout(layouts,data.layout),layouts.activeId);
     setData({...data,layout:selectedLayout(next,next.activeId,data.graph,data.layout)});
-    setLayouts(next);setPeek(null);setLayoutError("");
+    setLayouts(next);setPeek(null);setLayoutError("");setEditing(false);setFocusToken(0);
   }
   function shiftNode(id:string,dx:number,dy:number){
-    if(!data)return;
+    if(!data||!editing)return;
     setData(previous=>{
       if(!previous)return previous;
       const p=previous.layout.positions[id]??{x:0,y:0};
@@ -304,8 +304,13 @@ function App(){
           <div className="atlas-panel-footer">{filter?"Suchergebnisse":"Bereiche ausklappen, um Untermodule zu sehen"}</div>
         </aside>
         <div className="atlas-canvas-area">
-          <DemoCanvas graph={graph} layout={data.layout} view={view} selected={selected} zoom={zoom}
-            onSelect={choose} onZoom={setZoom} active={panel==="map"} focusToken={focusToken}
+          <DemoCanvas key={project.id+":"+(layouts?.activeId??"overview")}
+            graph={graph} layout={data.layout} view={view} selected={selected}
+            onSelect={choose} onMoveNode={(id,position)=>setData(previous=>previous?{
+              ...previous,layout:{positions:{...previous.layout.positions,[id]:position}}
+            }:previous)}
+            editing={editing} onEditingChange={setEditing}
+            active={panel==="map"} focusToken={focusToken}
             showTaskCounts={scope?.showTaskCounts??true}/>
         </div>
         {summary&&<section className="atlas-quick-card" aria-label={"Kurzinfo zu "+summary.title}>
@@ -321,12 +326,12 @@ function App(){
             <span>{summary.files.length} Quellen</span>
           </div>
           <div className="atlas-layout-nudge">
-            <span>Position in diesem Layout</span>
+            <span>Feinjustierung (alternativ im entsperrten Canvas frei ziehen)</span>
             <div role="group" aria-label="Position des gewählten Moduls verschieben">
-              <button aria-label="Nach links verschieben" onClick={()=>shiftNode(summary.id,-70,0)}>←</button>
-              <button aria-label="Nach oben verschieben" onClick={()=>shiftNode(summary.id,0,-70)}>↑</button>
-              <button aria-label="Nach unten verschieben" onClick={()=>shiftNode(summary.id,0,70)}>↓</button>
-              <button aria-label="Nach rechts verschieben" onClick={()=>shiftNode(summary.id,70,0)}>→</button>
+              <button disabled={!editing} aria-label="Nach links verschieben" onClick={()=>shiftNode(summary.id,-70,0)}>←</button>
+              <button disabled={!editing} aria-label="Nach oben verschieben" onClick={()=>shiftNode(summary.id,0,-70)}>↑</button>
+              <button disabled={!editing} aria-label="Nach unten verschieben" onClick={()=>shiftNode(summary.id,0,70)}>↓</button>
+              <button disabled={!editing} aria-label="Nach rechts verschieben" onClick={()=>shiftNode(summary.id,70,0)}>→</button>
             </div>
           </div>
           <div className="atlas-quick-actions">

@@ -24,3 +24,19 @@ Das endgültige Designsystem und die konkrete Komponentenbibliothek sind noch ni
 ## Noch offen
 
 Für die vorläufige UI kommen als Referenz shadcn/ui Dashboard/Sidebar, Mantine UI und Tabler infrage. Wir übernehmen keine komplette Designvorlage ohne Entscheidung und Lizenzprüfung.
+
+## Freier Canvas und Interaktionsschutz
+
+Die Kamera (Pan/Zoom/Focus/Fit) ist ein eigenständiger, reiner
+Darstellungsadapter und darf niemals Modul-IDs, Beziehungen, Aufgaben
+oder Diagrammpositionen allein wegen einer Kameraänderung neu
+speichern. Es gibt keine feste Canvas-Grenze; auch negative
+Weltkoordinaten sind zulässig.
+
+Die Interaktion unterscheidet ausdrücklich zwischen
+**Navigation** (immer zugänglich) und **Modulbearbeitung**
+(nur nach Entsperren). Im gesperrten Modus dürfen weder Dragging
+noch Richtungssteuerung Layoutpositionen verändern. Beim
+Projekt-/Ansichtswechsel wird die Bearbeitung wieder gesperrt.
+Eine gewählte Layoutstruktur ist keine verpflichtende Baum- oder
+Pyramidenform. Der Fit-Befehl berücksichtigt aktuelle Koordinaten.

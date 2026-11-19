@@ -112,3 +112,38 @@ die benannten Layouts. Alles wird ausschließlich im Browser
 gespeichert. Es wird **keine Verbindung** zur privaten PostgreSQL-API
 hergestellt. Browserdaten können gelöscht werden, ohne dass das
 echte Atlas-Projekt verändert wird.
+
+## Freier Canvas: Kamera, Gesten und gesperrtes Layout
+
+Der Canvas ist keine begrenzte 1090-Pixel-Zeichenfläche mehr. Die
+`canvas-camera.ts` berechnet eine **unbegrenzte Verschiebung in beide
+Achsen** sowie Zoom um den jeweiligen Finger- bzw. Mausanker. Der
+Modulgraph und die gespeicherten Layoutkoordinaten bleiben davon getrennt.
+
+- Auf dem Handy den Canvas mit einem Finger verschieben und mit zwei
+  Fingern frei zoomen. Die Tasten `−`, `+` und `Einpassen`
+  sind jederzeit erreichbar.
+- Mit Maus oder Touchpad auf der Karte ziehen; mit Touchpad scrollen
+  zum Verschieben und mit `Strg`/`Cmd` + Scrollen zum Zoomen.
+- Das **Schloss ist anfangs geschlossen**. Der Canvas lässt sich
+  bewegen und Module lassen sich auswählen, aber nicht versehentlich
+  verschieben. Erst `Gesperrt` antippen, dann per Finger/Maus ein
+  Modul an eine beliebige Position ziehen. `Sperren` beendet
+  den Bearbeitungsmodus.
+- Die Pfeiltasten in der Kurzinfo bleiben zum exakten Nachjustieren
+  erhalten, funktionieren jedoch nur im entsperrten Bearbeitungsmodus.
+- Der Befehl `Einpassen` berechnet den sichtbaren Ausschnitt aus
+  den **aktuellen** Positionen der Module – auch bei negativen X- und
+  Y-Werten. Ein festes Pyramidenlayout ist nicht vorausgesetzt.
+- Jede gespeicherte Canvas-Ansicht behält weiterhin ihre eigenen
+  Modulpositionen. Beim Ansichts-/Projektwechsel wird vorsichtshalber
+  wieder gesperrt. Die Kamera ist bewusst nur lokaler UI-Zustand und
+  **kein** Bestandteil des Fachgraphen oder Serverlayouts.
+
+Die Tests unter `npm run test:architecture` sichern Welt-/Bildschirm-
+Transformationen, Zoom-Anker, unabhängige Layouts, unbegrenztes
+Verschieben und das Einpassen von Knoten mit negativen Koordinaten.
+Ein realer Touch-/Pinch-Test auf iPhone/Android/iPad steht zusätzlich
+noch aus. Die Änderungen betreffen nur die statische öffentliche
+Demo; die private produktive Atlas-App verwendet weiterhin einen
+eigenen Renderer und wird in einer folgenden Etappe migriert.
