@@ -1,0 +1,72 @@
+/* A single presentational timeline for both real MVP roadmap snapshots
+   and fictional browser-local project histories. Data stays independent. */
+.atlas-timeline{width:100%;min-width:0;padding:22px 22px 35px;color:var(--atlas-text)}
+.atlas-timeline-header{display:flex;gap:22px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;padding-bottom:23px;border-bottom:1px solid var(--atlas-border)}
+.atlas-timeline-header>div:first-child{flex:1;min-width:230px}
+.atlas-timeline-header h2{font-size:25px;line-height:1.2;letter-spacing:-.4px;margin:8px 0 10px}
+.atlas-timeline-header p{font-size:13px;line-height:1.65;color:var(--atlas-muted);max-width:730px}
+.atlas-timeline-counters{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--atlas-muted);align-items:center}
+.atlas-timeline-counters span{padding:7px 10px;border:1px solid var(--atlas-border);border-radius:5px}
+.atlas-timeline-navigation{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:22px 0 0;color:var(--atlas-muted)}
+.atlas-timeline-navigation small{font-size:11px;line-height:1.5}
+.atlas-timeline-scrollbuttons{display:flex;gap:5px}
+.atlas-timeline-scrollbuttons button{min-width:42px;min-height:40px;background:var(--atlas-control);border:1px solid var(--atlas-border);border-radius:5px;font-size:17px;color:var(--atlas-text)}
+.atlas-timeline-track{display:flex;gap:20px;list-style:none;overflow-x:auto;overflow-y:hidden;margin:0;padding:16px 5px 24px;scroll-snap-type:x proximity;scrollbar-color:var(--atlas-border) transparent;overscroll-behavior-inline:contain}
+.atlas-timeline-track:focus-visible{outline:2px solid var(--atlas-accent);outline-offset:3px}
+.atlas-timeline-step{position:relative;flex:0 0 clamp(258px,24vw,310px);min-width:0;padding-top:42px;scroll-snap-align:start}
+.atlas-timeline-step::before{content:"";position:absolute;top:22px;left:15px;width:calc(100% + 20px);height:2px;background:var(--atlas-border)}
+.atlas-timeline-step:last-of-type::before{width:35px}
+.atlas-timeline-dot{position:absolute;top:14px;left:7px;width:18px;height:18px;border:3px solid var(--atlas-border);background:var(--atlas-bg);border-radius:50%;z-index:1}
+.atlas-timeline-step.status-done .atlas-timeline-dot{background:var(--atlas-accent);border-color:var(--atlas-accent)}
+.atlas-timeline-step.status-active .atlas-timeline-dot{border-color:var(--atlas-accent)}
+.atlas-timeline-step.status-blocked .atlas-timeline-dot{border-style:dashed}
+.atlas-timeline-card{display:flex;flex-direction:column;gap:12px;background:var(--atlas-surface);border:1px solid var(--atlas-border);border-radius:8px;padding:17px;min-height:330px;height:100%}
+.atlas-timeline-step.status-active .atlas-timeline-card{border-color:var(--atlas-accent)}
+.atlas-timeline-metadata{display:flex;justify-content:space-between;gap:9px;align-items:center;font-size:11px}
+.atlas-timeline-phase{font-size:10px;letter-spacing:.7px;color:var(--atlas-muted);font-variant-numeric:tabular-nums}
+.atlas-timeline-state{color:var(--atlas-text);font-weight:600}
+.atlas-timeline-category{font-size:11px;letter-spacing:.15px;color:var(--atlas-muted)}
+.atlas-timeline-card h3{font-size:16px;line-height:1.3;overflow-wrap:anywhere;font-weight:650}
+.atlas-timeline-field strong,.atlas-timeline-incident strong{font-size:11px;font-weight:650;color:var(--atlas-text)}
+.atlas-timeline-field p,.atlas-timeline-incident p{margin-top:5px!important;font-size:12px;line-height:1.6;color:var(--atlas-muted);overflow-wrap:anywhere}
+.atlas-timeline-incident,.atlas-timeline-criteria{padding-top:10px;border-top:1px solid var(--atlas-border)}
+.atlas-timeline-incident summary,.atlas-timeline-criteria summary{font-size:12px;color:var(--atlas-text);cursor:pointer;min-height:32px}
+.atlas-timeline-incident>div{padding:7px 0}
+.atlas-timeline-criteria ul{list-style:disc;padding-left:18px;display:grid;gap:7px;color:var(--atlas-muted);font-size:11px;line-height:1.5}
+.atlas-timeline-warning{color:var(--atlas-muted)}
+.atlas-timeline-source{font-size:12px;color:var(--atlas-accent);text-decoration:underline;align-self:flex-start}
+.atlas-timeline-card-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.atlas-timeline-card-actions button{background:var(--atlas-control);color:var(--atlas-text);border:1px solid var(--atlas-border);border-radius:5px;min-height:37px;padding:7px 9px;font-size:11px}
+.atlas-timeline-note{font-size:11px;line-height:1.65;color:var(--atlas-muted);margin:13px 0 0!important}
+.atlas-timeline-editor{margin-top:24px;border-top:1px solid var(--atlas-border);padding-top:17px}
+.atlas-timeline-toggle{display:flex;gap:10px;align-items:center;min-height:44px;border:1px solid var(--atlas-border);background:var(--atlas-control);color:var(--atlas-text);border-radius:6px;padding:10px 14px;font-size:12px}
+.atlas-timeline-form{margin-top:16px;display:grid;gap:13px;background:var(--atlas-surface);border:1px solid var(--atlas-border);border-radius:8px;padding:20px;max-width:780px}
+.atlas-timeline-form h3{font-size:16px}
+.atlas-timeline-form label{display:grid;gap:7px;font-size:12px;color:var(--atlas-text)}
+.atlas-timeline-form input,.atlas-timeline-form select,.atlas-timeline-form textarea{min-width:0;width:100%;padding:10px 12px;background:var(--atlas-panel);border:1px solid var(--atlas-border);color:var(--atlas-text);border-radius:5px;font-size:13px;line-height:1.4;min-height:43px}
+.atlas-timeline-form textarea{min-height:73px;resize:vertical}
+.atlas-timeline-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.atlas-timeline-form-actions{display:flex;justify-content:flex-end;gap:8px}
+.atlas-timeline-form-actions button{min-height:44px;border:1px solid var(--atlas-border);border-radius:5px;padding:9px 13px}
+.atlas-timeline-form-error{font-size:12px;color:#d9a9a5}
+.atlas-timeline-empty{color:var(--atlas-muted);font-size:12px;padding:20px}
+@media(max-width:700px){
+ .atlas-timeline{padding:19px 14px 40px}
+ .atlas-timeline-header{gap:14px;padding-bottom:15px}
+ .atlas-timeline-header h2{font-size:22px}
+ .atlas-timeline-counters{gap:6px}
+ .atlas-timeline-counters span{font-size:10px;padding:6px 8px}
+ .atlas-timeline-navigation{margin:15px 0 10px}
+ .atlas-timeline-scrollbuttons{display:none}
+ .atlas-timeline-track{flex-direction:column;gap:12px;overflow:visible;scroll-snap-type:none;padding:5px 0 0}
+ .atlas-timeline-step{flex:auto;width:100%;padding:0 0 0 35px;scroll-snap-align:none}
+ .atlas-timeline-step::before{top:12px;left:13px;width:2px;height:calc(100% + 14px)}
+ .atlas-timeline-step:last-of-type::before{width:2px;height:21px}
+ .atlas-timeline-dot{top:11px;left:5px}
+ .atlas-timeline-card{min-height:0;padding:15px}
+ .atlas-timeline-form{padding:14px}
+ .atlas-timeline-form-grid{grid-template-columns:1fr;gap:13px}
+ .atlas-timeline-form input,.atlas-timeline-form select,.atlas-timeline-form textarea{font-size:16px}
+ .atlas-timeline-card-actions button{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){.atlas-timeline-track{scroll-behavior:auto}}
