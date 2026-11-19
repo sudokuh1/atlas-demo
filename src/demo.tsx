@@ -64,7 +64,7 @@ function App(){
     setSelected(next.graph.nodes[0]?.id??"");
     setView(projectSettings(settings,entry.id).defaultView);
     setExpanded(new Set(next.graph.nodes.filter(n=>n.kind==="project").map(n=>n.id)));
-    setFilter("");setPeek(null);setDetail(null);setEditing(false);setPanel("modules");setScreen("project");
+    setFilter("");setPeek(null);setDetail(null);setEditing(false);setFocusToken(0);setPanel("modules");setScreen("project");
   }
   function home(){setScreen("projects");setPeek(null);setDetail(null);setEditing(false);}
   function openSettings(){
@@ -94,7 +94,7 @@ function App(){
     if(!project||!confirm("Änderungen an diesem Beispielprojekt zurücksetzen?"))return;
     const next=defaultProjectState(project);
     setData(next);setLayouts(initialLayouts(next.layout));
-    setPeek(null);setDetail(null);setLayoutError("");setEditing(false);
+    setPeek(null);setDetail(null);setLayoutError("");setEditing(false);setFocusToken(0);
   }
   function changeLayout(id:string) {
     if(!data||!layouts||!layouts.views.some(v=>v.id===id))return;
@@ -102,7 +102,7 @@ function App(){
     const next=selectedLayout(snapshot,id,data.graph,data.layout);
     setLayouts({...snapshot,activeId:id});
     setData({...data,layout:next});
-    setPeek(null);setDetail(null);setLayoutError("");setEditing(false);
+    setPeek(null);setDetail(null);setLayoutError("");setEditing(false);setFocusToken(0);
   }
   function copyLayout() {
     if(!data||!layouts)return;
@@ -125,7 +125,7 @@ function App(){
     if(!confirm("Diese Layoutansicht entfernen? Module und Aufgaben bleiben bestehen."))return;
     const next=removeLayout(withActiveLayout(layouts,data.layout),layouts.activeId);
     setData({...data,layout:selectedLayout(next,next.activeId,data.graph,data.layout)});
-    setLayouts(next);setPeek(null);setLayoutError("");setEditing(false);
+    setLayouts(next);setPeek(null);setLayoutError("");setEditing(false);setFocusToken(0);
   }
   function shiftNode(id:string,dx:number,dy:number){
     if(!data||!editing)return;

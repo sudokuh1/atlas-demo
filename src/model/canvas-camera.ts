@@ -2,7 +2,7 @@
 // This module deliberately depends on neither React nor the project data model.
 export type CanvasPoint={x:number;y:number};
 export type Camera={x:number;y:number;zoom:number};
-export const MIN_ZOOM=0.08;
+export const MIN_ZOOM=0.02;
 export const MAX_ZOOM=4;
 export const NODE_WIDTH=190;
 export const NODE_HEIGHT=86;

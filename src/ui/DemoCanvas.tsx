@@ -33,6 +33,7 @@ export function DemoCanvas({
  const pointers=useRef(new Map<number,CanvasPoint>());
  const nodeDrag=useRef<NodeDrag|null>(null);
  const moved=useRef(false);
+ const panTravel=useRef(0);
  const skipClick=useRef(false);
  const fitted=useRef(false);
  const peers=new Set(connectedRelations(graph,selected).flatMap(r=>[r.from,r.to]));
@@ -82,7 +83,7 @@ export function DemoCanvas({
    },el.clientWidth,el.clientHeight));
   });
   return ()=>cancelAnimationFrame(frame);
- },[active,focusToken,selected]);
+ },[active,focusToken]);
 
  useEffect(()=>{
   const el=viewport.current;if(!el)return;
@@ -107,7 +108,7 @@ export function DemoCanvas({
 
  function panStart(event:ReactPointerEvent<HTMLDivElement>){
   if(event.pointerType==="mouse"&&event.button!==0)return;
-  if(pointers.current.size===0){moved.current=false;skipClick.current=false;}
+  if(pointers.current.size===0){moved.current=false;skipClick.current=false;panTravel.current=0;}
   pointers.current.set(event.pointerId,viewportPoint(event.clientX,event.clientY));
   // Capture background gestures. Node taps retain their native click target.
   if(event.target===event.currentTarget){
@@ -137,7 +138,11 @@ export function DemoCanvas({
    const dx=next.x-previous.x,dy=next.y-previous.y;
    if(Math.abs(dx)+Math.abs(dy)>=1){
     commit(panCamera(cameraRef.current,dx,dy));
-    if(Math.abs(dx)+Math.abs(dy)>2)moved.current=true;
+    panTravel.current+=Math.hypot(dx,dy);
+    if(panTravel.current>4){
+     moved.current=true;
+     try{event.currentTarget.setPointerCapture(event.pointerId);}catch{/* capture optional */}
+    }
    }
   }
  }
@@ -219,7 +224,7 @@ export function DemoCanvas({
       return <path key={i} d={`M${x1} ${y1} C${x1} ${mid} ${x2} ${mid} ${x2} ${y2}`}
        fill="none" stroke={chosen?"var(--atlas-accent)":"var(--atlas-graph-line)"}
        strokeWidth={chosen?2.5:1.5} strokeDasharray={r.kind==="contains"?"none":"5 4"}
-       opacity={view==="dependencies"&&!chosen?.18:1}/>;
+       opacity={view==="dependencies"&&!chosen?0.18:1}/>;
      })}
     </svg>
     {graph.nodes.map(n=>{

@@ -92,7 +92,8 @@ try {
       "fit must include remote nodes and negative coordinates");
   }
   const focus=camera.centerCameraOn(fitted,{x:-2000,y:-1000},390,550);
-  assert.deepEqual(camera.worldToScreen({x:-2000,y:-1000},focus),{x:195,y:275});
+  const centered=camera.worldToScreen({x:-2000,y:-1000},focus);
+  assert.ok(Math.abs(centered.x-195)<1e-8 && Math.abs(centered.y-275)<1e-8);
   assert.equal(graph.graph.nodes[0].id,"game",
     "camera operations must never change canonical module IDs");
   console.log("Demo graph, hierarchy, project, settings, layouts and unbounded camera OK");
