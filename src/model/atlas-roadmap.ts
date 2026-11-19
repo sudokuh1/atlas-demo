@@ -11,7 +11,7 @@ export const atlasMilestones:TimelineEntry[]=[
   result:"Vision, Modul-IDs und Grenzen des lokalen MVP definiert.",
   problem:"Fachliche Daten durften nicht vom späteren UI-Design abhängen.",
   solution:"Graph, Canvas-Layout und Präsentation als getrennte Ebenen festgelegt.",
-  recordedAt:"2026-11-01",
+  recordedAt:"2026-11",
   criteria:["Vision und MVP-Umfang dokumentiert"]
  },
  {
@@ -19,7 +19,7 @@ export const atlasMilestones:TimelineEntry[]=[
   title:"Persistente Projektgrundlage",
   goal:"Module, Projekte und Beziehungen mit stabilen IDs speichern.",
   result:"React-Editor, Go-API und PostgreSQL-Datenmodell mit Integrationstests.",
-  problem:"",solution:"",recordedAt:"2026-11-01",
+  problem:"",solution:"",recordedAt:"2026-11",
   criteria:["Daten über Neustarts hinweg in PostgreSQL","Projektgebundene Graph-Beziehungen"]
  },
  {
@@ -29,7 +29,7 @@ export const atlasMilestones:TimelineEntry[]=[
   result:"Aufgaben, Dokumentation und manuelle Git-Webreferenzen sind implementiert.",
   problem:"Referenzen sind noch keine automatische Git-Synchronisierung.",
   solution:"Manuelle Herkunft klar von zukünftiger Live-Integration abgegrenzt.",
-  recordedAt:"2026-11-01"
+  recordedAt:"2026-11"
  },
  {
   id:"A03",phase:"A03",category:"step",status:"done",
@@ -38,7 +38,7 @@ export const atlasMilestones:TimelineEntry[]=[
   result:"Benannte Views mit eigenen Layouts, Revisionen und getrennten API-Schreibwegen.",
   problem:"Die alte API mischte Positionen mit Modul- und Beziehungsdaten.",
   solution:"Neue Graph-/Layout-Endpunkte eingeführt; alte /map-API bleibt kompatibel.",
-  recordedAt:"2026-11-01",
+  recordedAt:"2026-11",
   reference:{label:"PR #8",url:"https://github.com/sudokuh1/atlas/pull/8"}
  },
  {
@@ -48,7 +48,7 @@ export const atlasMilestones:TimelineEntry[]=[
   result:"Projektordner, eigenständige Settings und entkoppelte Editorsteuerung.",
   problem:"Projektstart war festgelegt; der React-Einstieg bündelte zu viele Aufgaben.",
   solution:"Projektverzeichnis und getrennte Domain-/API-/UI-Controller eingeführt.",
-  recordedAt:"2026-11-01",
+  recordedAt:"2026-11",
   reference:{label:"PR #10",url:"https://github.com/sudokuh1/atlas/pull/10"}
  },
  {

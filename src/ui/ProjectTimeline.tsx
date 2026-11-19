@@ -58,7 +58,7 @@ export function ProjectTimeline({title,description,entries,note,onAdd,onUpdate,o
   }
   if(!onAdd)return;
   const issue=editingID?
-   onUpdate?.(editingID,draft)??"Bearbeitung nicht verfügbar.":
+   (onUpdate?onUpdate(editingID,draft):"Bearbeitung nicht verfügbar."):
    onAdd(draft);
   if(issue){setError(issue);return;}
   stopEditing();

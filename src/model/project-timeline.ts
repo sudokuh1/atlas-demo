@@ -40,7 +40,7 @@ export function validTimelineEntry(value:unknown):value is TimelineEntry{
     v.recordedAt.length>0&&v.recordedAt.length<=40&&!Number.isNaN(Date.parse(v.recordedAt)))) &&
   (v.criteria===undefined||(Array.isArray(v.criteria)&&v.criteria.length<=12&&
     v.criteria.every(s=>typeof s==="string"&&s.length<=500))) &&
-  (v.reference===undefined||(typeof v.reference.label==="string" &&
+  (v.reference===undefined||(v.reference!==null && typeof v.reference==="object" && typeof v.reference.label==="string" &&
     typeof v.reference.url==="string" &&
     v.reference.url.startsWith("https://github.com/sudokuh1/")));
 }
