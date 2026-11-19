@@ -96,6 +96,15 @@ try {
   assert.ok(Math.abs(centered.x-195)<1e-8 && Math.abs(centered.y-275)<1e-8);
   assert.equal(graph.graph.nodes[0].id,"game",
     "camera operations must never change canonical module IDs");
+  const css=fs.readFileSync(new URL("../src/demo.css",import.meta.url),"utf8");
+  const canvasMarkup=fs.readFileSync(new URL("../src/ui/DemoCanvas.tsx",import.meta.url),"utf8");
+  assert.match(canvasMarkup,/className="atlas-connections"/,"connection SVG needs explicit class");
+  assert.doesNotMatch(css,/\.atlas-board\s+svg\s*\{/,
+    "SVG selector must not absolutely position icons inside graph nodes");
+  assert.match(css,/\.atlas-board\s*>\s*svg\.atlas-connections\s*\{/,
+    "SVG positioning must only affect the connection layer");
+  assert.match(css,/\.atlas-graph-icon\s*>\s*svg\s*\{/,
+    "graph icons must retain their centered layout");
   console.log("Demo graph, hierarchy, project, settings, layouts and unbounded camera OK");
 }finally{
   fs.rmSync(temp,{recursive:true,force:true});

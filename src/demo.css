@@ -99,7 +99,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-v
 .atlas-canvas-viewport{flex:1;min-height:520px;overflow:auto;overscroll-behavior:contain;touch-action:none;background-image:radial-gradient(var(--atlas-border) .8px,transparent .8px);background-size:22px 22px}
 .atlas-scaled{position:relative}
 .atlas-board{position:absolute;left:0;top:0;width:1090px;transform-origin:top left}
-.atlas-board svg{position:absolute;inset:0;pointer-events:none}
+.atlas-board > svg.atlas-connections{position:absolute;inset:0;overflow:visible;pointer-events:none}
 .atlas-graph-node{position:absolute;width:190px;height:86px;display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--atlas-border);border-radius:8px;text-align:left;background:var(--atlas-surface);color:var(--atlas-text);box-shadow:0 3px 10px #0001;touch-action:none}
 .atlas-graph-node:hover{background:var(--atlas-hover)}
 .atlas-graph-node.selected{border:2px solid var(--atlas-accent);background:var(--atlas-raised)}
@@ -265,7 +265,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-v
   transform-origin:0 0;
   will-change:transform;
 }
-.atlas-board svg{overflow:visible;pointer-events:none}
+.atlas-board > svg.atlas-connections{overflow:visible;pointer-events:none}
 .atlas-board .atlas-graph-node{
   touch-action:none;
   cursor:pointer;
@@ -299,3 +299,15 @@ button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-v
   .atlas-canvas-edit{bottom:55px;left:10px;min-height:44px}
   .atlas-canvas-caption{line-height:1.6}
 }
+
+/* The node SVG is a flex/grid child, not a board-level connection layer. */
+.atlas-graph-icon > svg{
+  position:static;
+  inset:auto;
+  display:block;
+  flex:none;
+  width:21px;
+  height:21px;
+  pointer-events:none;
+}
+.atlas-quick-icon > svg{position:static;display:block;flex:none}
